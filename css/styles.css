@@ -326,13 +326,12 @@ nav h1 a {
 #reviews-list li {
   background-color: #fff;
     border: 2px solid #f3f3f3;
-  display: block;
+  border-radius: 2px;
   list-style-type: none;
-  margin: 0 0 30px;
+  margin: 0 0 1rem;
   overflow: hidden;
-  padding: 0 20px 20px;
+  padding: .75rem;
   position: relative;
-  width: 85%;
 }
 #reviews-list li p {
   margin: 0 0 10px;
