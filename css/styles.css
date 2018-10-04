@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+html {
+  --header-height: 60px;
+}
+
 body,td,th,p{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
@@ -72,7 +76,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 /* ====================== Navigation ====================== */
 nav {
   width: 100%;
-  height: 80px;
+  height:var(--header-height);
   background-color: #252831;
   text-align:center;
 }
@@ -220,6 +224,12 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+@media screen and (min-width: 980px) {
+  #restaurants-list {
+    height: 100%;
+    overflow: scroll;
+  }
+}
 /* ====================== Restaurant Details ====================== */
 .inside header {
   position: fixed;
