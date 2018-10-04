@@ -334,7 +334,7 @@ nav h1 a {
   position: relative;
 }
 #reviews-list li p {
-  margin: 0 0 10px;
+  margin: 0 0 .75rem;
 }
 #restaurant-hours td {
   color: #666;
