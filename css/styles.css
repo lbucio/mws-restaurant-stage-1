@@ -101,17 +101,12 @@ nav h1 a {
   text-transform: uppercase;
 }
 #breadcrumb {
-    padding: 10px 40px 16px;
+    padding: .65rem 0 .65rem 1rem;
     list-style: none;
     background-color: #eee;
     font-size: 17px;
     margin: 0;
-    width: calc(50% - 80px);
-}
-
-/* Display list items side by side */
-#breadcrumb li {
-    display: inline;
+    display: flex;
 }
 
 /* Add a slash symbol (/) before/behind each list item */
