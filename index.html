@@ -23,9 +23,11 @@
     <section id="results-container">
       <div class="filter-options">
         <h2>Filter Results</h2>
+        <label class="screenreader" for="neighborhoods-select">By Neighborhoods</label>
         <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
           <option value="all">All Neighborhoods</option>
         </select>
+        <label class="screenreader" for="cuisines-select">By Cuisines</label>
         <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
           <option value="all">All Cuisines</option>
         </select>
