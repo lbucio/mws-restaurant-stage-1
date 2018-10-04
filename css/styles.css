@@ -241,24 +241,41 @@ nav h1 a {
   width: 100%;
   z-index: 1000;
 }
+
+.inside #maincontent {
+  display: flex;
+}
+
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: 87%;
-  position: fixed;
-  right: 0;
-  top: 80px;
-  width: 50%;
 }
+
 .inside #map {
   background-color: #ccc;
+  height: 200px;
+}
+
+@media screen and (min-width: 900px) {
+  
+  .inside #maincontent {
+    flex-flow: row wrap;
+  }
+
+  .inside #map-container, .inside #restaurant-container {
+    flex: 1 1 50%;
+  }
+
+  .inside #restaurant-container {
+    order: -1;
+  }
+
+  .inside #map {
   height: 100%;
   width: 100%;
 }
-.inside #footer {
-  bottom: 0;
-  position: absolute;
-  width: 50%;
+
 }
+
 #restaurant-name {
   color: #f18200;
   font-family: Arial,sans-serif;
