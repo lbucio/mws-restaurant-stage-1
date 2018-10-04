@@ -320,6 +320,8 @@ nav h1 a {
 #reviews-list {
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-flow: column nowrap;
 }
 #reviews-list li {
   background-color: #fff;
