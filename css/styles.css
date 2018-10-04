@@ -183,13 +183,12 @@ nav h1 a {
   text-align: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: auto;
+  grid-auto-rows: min-content;
   grid-gap: 15px;
 }
 #restaurants-list li {
   background-color: #fff;
   overflow: hidden;
-  min-height: 340px;
   padding: 0 1rem 1rem;
   text-align: left;
   position: relative;
