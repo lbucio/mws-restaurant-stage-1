@@ -51,6 +51,12 @@ h1, h2, h3, h4, h5, h6 {
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+
+.card {
+  border-radius: 2px;
+  box-shadow: 0 2px 0 hsl(194, 13%, 77%), 0 3px 6px rgba(0, 0, 0, 0.24);
+}
+
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
