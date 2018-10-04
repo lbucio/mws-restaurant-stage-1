@@ -9,6 +9,14 @@ html {
   --header-height: 60px;
 }
 
+.screenreader {
+  position: absolute;
+  left: -10000px;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
 body,td,th,p{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
@@ -268,9 +276,9 @@ nav h1 a {
   }
 
   .inside #map {
-  height: 100%;
-  width: 100%;
-}
+    height: 100%;
+    width: 100%;
+  }
 
 }
 
@@ -323,7 +331,7 @@ nav h1 a {
 }
 #reviews-list li {
   background-color: #fff;
-    border: 2px solid #f3f3f3;
+  border: 2px solid #f3f3f3;
   border-radius: 2px;
   list-style-type: none;
   margin: 0 0 1rem;
