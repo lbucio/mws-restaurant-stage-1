@@ -79,13 +79,23 @@ nav {
   height:var(--header-height);
   background-color: #252831;
   text-align:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 nav h1 {
-  margin: auto;
+  height: 100%;
+  text-align:center;
+  display: flex;
+  align-items: center;
+  margin: 0;
 }
 nav h1 a {
+  height: 100%;
+  display: flex;
+  align-items: center;
   color: #fff;
-  font-size: 14pt;
+  font-size: 1rem;
   font-weight: 200;
   letter-spacing: 10px;
   text-transform: uppercase;
