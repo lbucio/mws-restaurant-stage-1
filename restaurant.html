@@ -12,6 +12,7 @@
 </head>
 
 <body class="inside">
+  <a href="#maincontent" class="screenreader">Skip to main content</a>
   <!-- Beginning header -->
   <header>
     <!-- Beginning nav -->
@@ -30,7 +31,8 @@
   <!-- Beginning main -->
   <main id="maincontent">
     <!-- Beginning map -->
-    <section id="map-container">
+    <label id="map-label" class="screenreader">Map Restauraunt Location</label>
+    <section id="map-container" aria-labelledby="map-label" role="application">
       <div id="map"></div>
     </section>
     <!-- End map -->
@@ -38,7 +40,7 @@
     <section id="restaurant-container">
       <h1 id="restaurant-name"></h1>
       <picture id="restaurant-picture">
-      <img id="restaurant-img">
+        <img id="restaurant-img">
       </picture>
       <p id="restaurant-cuisine"></p>
       <p id="restaurant-address"></p>
