@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines();
 });
 
+window.addEventListener('load', (event) => {
+  registerServiceWorker();
+});
+
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -234,3 +238,19 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 } */
 
+registerServiceWorker = () => {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+registerServiceWorker = () => {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  navigator.serviceWorker.register('../sw.js')
+    .then( registration => {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, err => {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+}
