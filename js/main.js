@@ -162,11 +162,25 @@ createRestaurantHTML = (restaurant) => {
   const cardHeader = document.createElement('div');
   cardHeader.className = 'card-header';
 
+  const imageName = restaurant.photograph.split('.')[0];
+  const picture = document.createElement('picture');
+
+  const source = document.createElement('source');
+  source.media = "(min-width: 1650px)";
+  source.srcset = DBHelper.imageUrlForRestaurant(imageName);
+  picture.append(source);
+
+  const source400 = document.createElement('source');
+  source400.srcset = `${DBHelper.imageUrlForRestaurant(imageName, '-400w')}, ${DBHelper.imageUrlForRestaurant(imageName, '-400w@2x')} 2x`;
+  picture.append(source400);
+
   const image = document.createElement('img');
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.imageUrlForRestaurant(imageName);
   image.alt = restaurant.name;
-  cardHeader.append(image);
+
+  picture.append(image);
+  cardHeader.append(picture);
   li.append(cardHeader);
 
   const content = document.createElement('div');
