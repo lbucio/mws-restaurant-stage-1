@@ -4,6 +4,15 @@
 class DBHelper {
 
   /**
+   * API URL.
+   * Change this to restaurants.json file location on your server.
+   */
+  static get API_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}`;
+  }
+
+  /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
@@ -12,23 +21,55 @@ class DBHelper {
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
+
   /**
-   * Fetch all restaurants.
+   * Get the init for the fetch request
    */
-  static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
+  static fetchInit(method) {
+    const headers = new Headers();
+
+    headers.append('Accept', 'application/json');
+    headers.append('Content-Type', 'application/json');
+
+    return {
+      headers,
+      method
     };
-    xhr.send();
+  }
+
+  /**
+   * Get all restaurants.
+   */
+  static getRestaurants(callback) {
+    const init = DBHelper.fetchInit('GET');
+    const url = `${DBHelper.API_URL}/restaurants`;
+    return DBHelper.makeCall(url, init, callback);
+  }
+
+  /**
+   * Get restaurant by id
+   */
+  static getRestaurantById(id, callback) {
+    const init = DBHelper.fetchInit('GET');
+    const url = `${DBHelper.API_URL}/restaurants/${id}`;
+    return DBHelper.makeCall(url, init, callback);
+  }
+
+  /**
+   * Fetch the resource
+   */
+  static makeCall(url, init, callback) {
+    return fetch(url, init)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then(restaurants => {
+        callback(null, restaurants);
+      }).catch(error => {
+        const errorMessage = (`Request failed. ${error}`);
+        callback(errorMessage, null);
+      });
   }
 
   /**
@@ -36,11 +77,10 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurantById(id, (error, restaurant) => {
       if (error) {
         callback(error, null);
       } else {
-        const restaurant = restaurants.find(r => r.id == id);
         if (restaurant) { // Got the restaurant
           callback(null, restaurant);
         } else { // Restaurant does not exist in the database
@@ -55,7 +95,7 @@ class DBHelper {
    */
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -71,7 +111,7 @@ class DBHelper {
    */
   static fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -87,7 +127,7 @@ class DBHelper {
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -108,7 +148,7 @@ class DBHelper {
    */
   static fetchNeighborhoods(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -126,7 +166,7 @@ class DBHelper {
    */
   static fetchCuisines(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
