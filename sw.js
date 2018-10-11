@@ -36,20 +36,50 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches.match(event.request).then(function (response) {
-            return response || fetch(event.request);
-        })
-    );
-
     const request = event.request;
-    event.waitUntil(
-        caches.open(STATIC_CACHE_NAME).then(function (cache) {
-            return fetch(request).then(function (response) {
-                return cache.put(request, response);
-            });
-        })
-    );
+    const isJsonRequest = request.headers.has('Accept') ? request.headers.get('Accept') === 'application/json' : false;
+
+    if (request.url.match(/(\/restaurants\/\d)/g) !== null) {
+        event.respondWith(
+            fetch(request).then(function (response) {
+                saveRestaurant(response.clone());
+                return response;
+            }).catch(_ => {
+                const string = '/restaurants/';
+                const index = request.url.indexOf(string);
+                const id = Number(request.url.slice(index + string.length));
+                return getRestaurant(id);
+            })
+        );
+    } else if (request.url.includes('/restaurants')) {
+        event.respondWith(
+            fetch(request).then(function (response) {
+                saveRestaurants(response.clone());
+                return response;
+            }).catch(_ => {
+                return getRestaurants();
+            })
+        );
+    } 
+
+    if (!isJsonRequest)
+    {
+        event.respondWith(
+            caches.match(event.request).then(function (response) {
+                return response || fetch(event.request);
+            })
+        );
+
+        event.waitUntil(
+            caches.open(STATIC_CACHE_NAME).then(function (cache) {
+                return fetch(request).then(function (response) {
+                    return cache.put(request, response);
+                });
+            })
+        );
+    }
+
+});
 
 const openDatabase = () => {
     const dbPromise = idb.open('restaurant-reviews-store', 1, upgradeDb => {
@@ -59,4 +89,41 @@ const openDatabase = () => {
     });
     return dbPromise;
 };
-});
+
+const getRestaurantStore = async () => {
+    const db = await dbPromise;
+    if (!db) {
+        return Promise.resolve(null);
+    }
+
+    const transaction = db.transaction('restaurant-reviews', 'readwrite');
+    return transaction.objectStore('restaurant-reviews');
+};
+
+const saveRestaurant = async (response) => {
+    const restaurant = await response.json();
+    const store = await getRestaurantStore();
+    store.put(restaurant);
+};
+
+const saveRestaurants = async (response) => {
+    const restaurants = await response.json();
+    const store = await getRestaurantStore();
+    restaurants.forEach(restaurant => {
+        store.put(restaurant);
+    });
+};
+
+const getRestaurants = async () => {
+    const store = await getRestaurantStore();
+    const restaurants = await store.getAll();
+    const restaurantsJson = JSON.stringify(restaurants);
+    return new Response(restaurantsJson);
+};
+
+const getRestaurant = async (id) => {
+    const store = await getRestaurantStore();
+    const restaurant = await store.get(id);
+    const restaurantJson = JSON.stringify(restaurant);
+    return new Response(restaurantJson);
+};
