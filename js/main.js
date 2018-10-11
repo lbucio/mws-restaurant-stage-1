@@ -194,7 +194,11 @@ const createRestaurantHTML = (restaurant) => {
   const cardHeader = document.createElement('div');
   cardHeader.className = 'card-header';
 
-  const imageName = restaurant.photograph.split('.')[0];
+  let imageName = 'no-image';
+  if (restaurant.photograph) {
+    imageName = restaurant.photograph.split('.')[0];
+  }
+  
   const picture = document.createElement('picture');
 
   const source = document.createElement('source');
@@ -235,9 +239,9 @@ const createRestaurantHTML = (restaurant) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
+  li.append(more);
 
-  return li
+  return li;
 }
 
 /**

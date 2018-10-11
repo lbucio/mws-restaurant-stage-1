@@ -90,7 +90,10 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
-  const imageName = restaurant.photograph.split('.')[0];
+  let imageName = 'no-image';
+  if (restaurant.photograph) {
+    imageName = restaurant.photograph.split('.')[0];
+  }
   const picture = document.getElementById('restaurant-picture');
 
   const source400 = document.createElement('source');
