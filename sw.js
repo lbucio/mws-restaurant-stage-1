@@ -1,3 +1,5 @@
+self.importScripts('./js/libs/idb.min.js');
+
 const STATIC_CACHE_NAME = 'mws_restaurant_cache_v1';
 const URLS_TO_CACHE = [
     '/',
