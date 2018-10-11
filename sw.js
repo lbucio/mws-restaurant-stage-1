@@ -8,7 +8,6 @@ const URLS_TO_CACHE = [
     '/js/dbhelper.js',
     '/js/main.js',
     '/js/restaurant_info.js',
-    '/data/restaurants.json',
 ];
 
 self.addEventListener('install', (event) => {
