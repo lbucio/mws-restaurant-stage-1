@@ -239,7 +239,7 @@ nav h1 a {
   transform: scale(1.03);
 }
 
-#restaurants-list li h1 {
+#restaurants-list li h2 {
   color: hsl(34, 100%, 43%);
   font-size: 1.5rem;
   font-weight: 200;
