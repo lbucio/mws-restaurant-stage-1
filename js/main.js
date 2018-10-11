@@ -17,13 +17,12 @@ window.addEventListener('load', (event) => {
 });
 
 const getRestuarants = () => {
-  DBHelper.getRestaurants((error, restaurants) => {
-    if (error) { // Got an error
-      console.error(error);
-    } else {
-      setNeighborhoodsFromRestaurants(restaurants);
-      setCuisinesFromRestaurants(restaurants);
-    }
+  DBHelper.getRestaurants().then(restaurants => {
+    setNeighborhoodsFromRestaurants(restaurants);
+    setCuisinesFromRestaurants(restaurants);
+  }).catch(error => {
+    // Got an error!
+    console.error(error);
   });
 };
 
@@ -40,8 +39,8 @@ const setCuisinesFromRestaurants = (data) => {
   const cuisines = data.map((v, i) => data[i].cuisine_type);
   // Remove duplicates from cuisines
   const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
-  self.cuisines = cuisines;
-  fillCuisinesHTML(cuisines);
+  self.cuisines = uniqueCuisines;
+  fillCuisinesHTML(uniqueCuisines);
 };
 
 
@@ -49,13 +48,12 @@ const setCuisinesFromRestaurants = (data) => {
  * Fetch all neighborhoods and set their HTML.
  */
 const fetchNeighborhoods = () => {
-  DBHelper.fetchNeighborhoods((error, neighborhoods) => {
-    if (error) { // Got an error
-      console.error(error);
-    } else {
-      self.neighborhoods = neighborhoods;
-      fillNeighborhoodsHTML();
-    }
+  DBHelper.fetchNeighborhoods().then(neighborhoods => {
+    self.neighborhoods = neighborhoods;
+    fillNeighborhoodsHTML();
+  }).catch(error => {
+    // Got an error!
+    console.error(error);
   });
 }
 
@@ -76,13 +74,12 @@ const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
  * Fetch all cuisines and set their HTML.
  */
 const fetchCuisines = () => {
-  DBHelper.fetchCuisines((error, cuisines) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.cuisines = cuisines;
-      fillCuisinesHTML();
-    }
+  DBHelper.fetchCuisines().then(cuisines => {
+    self.cuisines = cuisines;
+    fillCuisinesHTML();
+  }).catch(error => {
+    // Got an error!
+    console.error(error);
   });
 }
 
@@ -146,14 +143,13 @@ const updateRestaurants = () => {
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
 
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      resetRestaurants(restaurants);
-      fillRestaurantsHTML();
-    }
-  })
+  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood).then(restaurants => {
+    resetRestaurants(restaurants);
+    fillRestaurantsHTML();
+  }).catch(error => {
+    // Got an error!
+    console.error(error);
+  });
 }
 
 /**
