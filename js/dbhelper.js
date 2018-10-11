@@ -76,7 +76,7 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    DBHelper.getRestaurantById(id).then(restaurants => {
+    DBHelper.getRestaurantById(id).then(restaurant => {
       if (restaurant) { // Got the restaurant
         callback(null, restaurant);
       } else { // Restaurant does not exist in the database
