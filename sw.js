@@ -1,5 +1,6 @@
 self.importScripts('./js/libs/idb.min.js');
 
+let dbPromise;
 const STATIC_CACHE_NAME = 'mws_restaurant_cache_v1';
 const URLS_TO_CACHE = [
     '/',
@@ -12,6 +13,7 @@ const URLS_TO_CACHE = [
 
 self.addEventListener('install', (event) => {
     event.waitUntil(async function() {
+        dbPromise = openDatabase();
         const cache = await caches.open(STATIC_CACHE_NAME);
         return cache.addAll(URLS_TO_CACHE);
     }());
@@ -48,4 +50,13 @@ self.addEventListener('fetch', function (event) {
             });
         })
     );
+
+const openDatabase = () => {
+    const dbPromise = idb.open('restaurant-reviews-store', 1, upgradeDb => {
+        const store = upgradeDb.createObjectStore('restaurant-reviews', { keyPath: 'id' });
+        store.createIndex('by-cuisine', 'cuisine_type')
+        store.createIndex('by-neighborhood', 'neighborhood')
+    });
+    return dbPromise;
+};
 });
