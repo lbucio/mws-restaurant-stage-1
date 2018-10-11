@@ -67,7 +67,10 @@ class DBHelper {
           reject('Error');
         }).then(restaurants => {
           resolve(restaurants);
-        });
+        }).catch(error => {
+          const errorMessage = (`Request failed. ${error}`);
+          reject(errorMessage);
+        })
     });
   }
 
@@ -83,8 +86,7 @@ class DBHelper {
         callback('Restaurant does not exist', null);
       }
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
@@ -98,8 +100,7 @@ class DBHelper {
       const results = restaurants.filter(r => r.cuisine_type == cuisine);
       callback(null, results);
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
@@ -113,8 +114,7 @@ class DBHelper {
       const results = restaurants.filter(r => r.neighborhood == neighborhood);
       callback(null, results);
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
@@ -124,7 +124,7 @@ class DBHelper {
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.getRestaurants().then(restaurants => {
-      let results = restaurants
+      let results = restaurants;
       if (cuisine != 'all') { // filter by cuisine
         results = results.filter(r => r.cuisine_type == cuisine);
       }
@@ -133,8 +133,7 @@ class DBHelper {
       }
       callback(null, results);
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
@@ -150,8 +149,7 @@ class DBHelper {
       const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
       callback(null, uniqueNeighborhoods);
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
@@ -167,8 +165,7 @@ class DBHelper {
       const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
       callback(null, uniqueCuisines);
     }).catch(error => {
-      const errorMessage = (`Request failed. ${error}`);
-      callback(errorMessage, null);
+      callback(error, null);
     });
   }
 
