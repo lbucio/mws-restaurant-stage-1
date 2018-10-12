@@ -1,0 +1,32 @@
+{
+  "name": "restaurant-reviews",
+  "version": "1.0.0",
+  "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
+  "scripts": {
+    "dev": "webpack --config build/webpack.dev.js",
+    "watch": "webpack-dev-server --config build/webpack.dev.js --progress --watch --open",
+    "build": "webpack -p --config build/webpack.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbucio/mws-restaurant-stage-1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lbucio/mws-restaurant-stage-1/issues"
+  },
+  "homepage": "https://github.com/lbucio/mws-restaurant-stage-1#readme",
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
+    "clean-webpack-plugin": "^0.1.17",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-merge": "^4.1.1"
+  },
+  "dependencies": {
+    "webpack-dev-server": "^3.1.9"
+  }
+}
