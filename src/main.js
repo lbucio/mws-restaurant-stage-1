@@ -1,5 +1,5 @@
 import { DBHelper } from './dbhelper.js';
-const L = window.L;
+import * as L from 'leaflet';
 
 let restaurants,
     neighborhoods,

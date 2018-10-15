@@ -1,4 +1,5 @@
 import { DBHelper } from './dbhelper.js';
+import * as L from 'leaflet';
 
 let restaurant;
 var newMap;

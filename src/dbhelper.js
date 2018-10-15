@@ -1,4 +1,4 @@
-const L = window.L;
+import * as L from 'leaflet';
 
 /**
  * Common database helper functions.
