@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
   "scripts": {
-    "dev": "webpack --config build/webpack.dev.js",
-    "watch": "webpack-dev-server --config build/webpack.dev.js --progress --watch --open",
-    "build": "webpack -p --config build/webpack.prod.js"
+    "dev": "webpack --config build/webpack.dev.babel.js",
+    "watch": "webpack-dev-server --config build/webpack.dev.babel.js --progress --watch --open",
+    "build": "webpack -p --config build/webpack.prod.babel.js"
   },
   "repository": {
     "type": "git",
