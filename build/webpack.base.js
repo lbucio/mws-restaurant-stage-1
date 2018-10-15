@@ -9,6 +9,7 @@ module.exports = {
     entry: {
         main: './src/main.js',
         restaurant_info: './src/restaurant_info.js',
+        sw: './src/sw.js',
     },
     output: {
         filename: '[name].bundle.js',
