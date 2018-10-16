@@ -6,7 +6,6 @@ const URLS_TO_CACHE = [
     '/',
     '/restaurant.html',
     '/css/styles.css',
-    '/js/dbhelper.js',
     '/js/main.js',
     '/js/restaurant_info.js',
 ];
@@ -39,7 +38,7 @@ self.addEventListener('fetch', function (event) {
     const request = event.request;
     const isJsonRequest = request.headers.has('Accept') ? request.headers.get('Accept') === 'application/json' : false;
 
-    if (request.url.match(/(\/restaurants\/\d)/g) !== null) {
+    if (isJsonRequest && request.url.match(/(\/restaurants\/\d)/g) !== null) {
         event.respondWith(
             fetch(request).then(function (response) {
                 saveRestaurant(response.clone());
@@ -51,7 +50,7 @@ self.addEventListener('fetch', function (event) {
                 return getRestaurant(id);
             })
         );
-    } else if (request.url.includes('/restaurants')) {
+    } else if (isJsonRequest && request.url.includes('/restaurants')) {
         event.respondWith(
             fetch(request).then(function (response) {
                 saveRestaurants(response.clone());
