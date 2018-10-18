@@ -31,18 +31,18 @@ const initMap = () => {
                 mapboxToken: 'pk.eyJ1IjoibGFyczQiLCJhIjoiY2ppeGUybmZrMHAxeDNxbjNocDY4dndybiJ9.tGzAhqkV-7kQNBGsxb_ktQ',
                 maxZoom: 18,
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                id: 'mapbox.streets'    
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox.streets'
             }).addTo(newMap);
             fillBreadcrumb();
             DBHelper.mapMarkerForRestaurant(restaurant, newMap);
         })
         .catch(error => {
             console.error(error);
-    });
+        });
 };  
- 
+
 /**
  * Get current restaurant from page URL.
  */
@@ -51,22 +51,22 @@ const fetchRestaurantFromURL = () => {
         // restaurant already fetched!
         if (currentRestaurant) {
             resolve(currentRestaurant);
-    }
+        }
 
-    const id = getParameterByName('id');
+        const id = getParameterByName('id');
         // no id found in URL
         if (!id) {
             reject('No restaurant id in URL');
-    } else {
-        DBHelper.fetchRestaurantById(id).then(restaurant => {
+        } else {
+            DBHelper.fetchRestaurantById(id).then(restaurant => {
                 currentRestaurant = restaurant;
-            fillRestaurantHTML();
+                fillRestaurantHTML();
                 resolve(restaurant);
-        }).catch(error => {
-            console.error(error);
+            }).catch(error => {
+                console.error(error);
                 reject(error);
-        });
-    }
+            });
+        }
     });
 };
 
@@ -80,27 +80,10 @@ const fillRestaurantHTML = (restaurant = currentRestaurant) => {
     const address = document.getElementById('restaurant-address');
     address.innerHTML = restaurant.address;
 
-    let imageName = 'no-image';
-    if (restaurant.photograph) {
-        imageName = restaurant.photograph.split('.')[0];
-    }
     const picture = document.getElementById('restaurant-picture');
 
-    const source400 = document.createElement('source');
-    source400.srcset = `${DBHelper.imageUrlForRestaurant(imageName, '-400w')}, ${DBHelper.imageUrlForRestaurant(imageName, '-400w@2x')} 2x`;
-    picture.prepend(source400);
-
-    const source = document.createElement('source');
-    source.media = '(min-width: 1650px)';
-    source.srcset = DBHelper.imageUrlForRestaurant(imageName);
-    picture.prepend(source);
-
-
-    const image = document.getElementById('restaurant-img');
-
-    image.className = 'restaurant-img';
-    image.alt = restaurant.name;
-    image.src = DBHelper.imageUrlForRestaurant(imageName);
+    const sources = getPictureSources(restaurant);
+    picture.append(...sources);
 
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
@@ -111,6 +94,33 @@ const fillRestaurantHTML = (restaurant = currentRestaurant) => {
     }
     // fill reviews
     fillReviewsHTML();
+};
+
+const getPictureSources = (restaurant) => {
+    const sources = [];
+
+    let imageName = 'no-image';
+    if (restaurant.photograph) {
+        imageName = restaurant.photograph.split('.')[0];
+    }
+
+    const source = document.createElement('source');
+    source.media = '(min-width: 1650px)';
+    source.srcset = DBHelper.imageUrlForRestaurant(imageName);
+    sources.push(source);
+
+    const source400 = document.createElement('source');
+    source400.srcset = `${DBHelper.imageUrlForRestaurant(imageName, '-400w')}, ${DBHelper.imageUrlForRestaurant(imageName, '-400w@2x')} 2x`;
+    sources.push(source400);
+
+    const image = document.createElement('img');
+
+    image.className = 'restaurant-img';
+    image.alt = restaurant.name;
+    image.src = DBHelper.imageUrlForRestaurant(imageName);
+    sources.push(image);
+    
+    return sources;
 };
 
 /**
