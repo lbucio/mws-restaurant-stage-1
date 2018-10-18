@@ -8,6 +8,9 @@ const URLS_TO_CACHE = [
     '/css/styles.css',
     '/js/main.js',
     '/js/restaurant_info.js',
+    '/img/icons/icons-192.png',
+    '/img/icons/icons-512.png',
+    '/manifest.json',
 ];
 
 self.addEventListener('install', (event) => {
