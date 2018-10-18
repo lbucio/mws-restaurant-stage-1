@@ -2,11 +2,11 @@ import { DBHelper } from './dbhelper.js';
 import * as L from 'leaflet';
 import '../css/styles.css';
 
-let restaurants,
-    neighborhoods,
-    cuisines;
-var newMap;
-var markers = [];
+let cuisinesCollection;
+let markersCollection = [];
+let neighborhoodCollection;
+let newMap;
+let restaurantCollection;
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -37,7 +37,7 @@ const setNeighborhoodsFromRestaurants = (data) => {
     const neighborhoods = data.map((v, i) => data[i].neighborhood);
     // Remove duplicates from neighborhoods
     const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
-    self.neighborhoods = uniqueNeighborhoods;
+    neighborhoodCollection = uniqueNeighborhoods;
     fillNeighborhoodsHTML(uniqueNeighborhoods);
 };
 
@@ -45,7 +45,7 @@ const setCuisinesFromRestaurants = (data) => {
     const cuisines = data.map((v, i) => data[i].cuisine_type);
     // Remove duplicates from cuisines
     const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
-    self.cuisines = uniqueCuisines;
+    cuisinesCollection = uniqueCuisines;
     fillCuisinesHTML(uniqueCuisines);
 };
 
@@ -55,7 +55,7 @@ const setCuisinesFromRestaurants = (data) => {
  */
 const fetchNeighborhoods = () => {
     DBHelper.fetchNeighborhoods().then(neighborhoods => {
-        self.neighborhoods = neighborhoods;
+        neighborhoodCollection = neighborhoods;
         fillNeighborhoodsHTML();
     }).catch(error => {
         // Got an error!
@@ -66,7 +66,7 @@ const fetchNeighborhoods = () => {
 /**
  * Set neighborhoods HTML.
  */
-const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
+const fillNeighborhoodsHTML = (neighborhoods = neighborhoodCollection) => {
     const select = document.getElementById('neighborhoods-select');
     neighborhoods.forEach(neighborhood => {
         const option = document.createElement('option');
@@ -81,7 +81,7 @@ const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
  */
 const fetchCuisines = () => {
     DBHelper.fetchCuisines().then(cuisines => {
-        self.cuisines = cuisines;
+        cuisinesCollection = cuisines;
         fillCuisinesHTML();
     }).catch(error => {
     // Got an error!
@@ -92,7 +92,7 @@ const fetchCuisines = () => {
 /**
  * Set cuisines HTML.
  */
-const fillCuisinesHTML = (cuisines = self.cuisines) => {
+const fillCuisinesHTML = (cuisines = cuisinesCollection) => {
     const select = document.getElementById('cuisines-select');
 
     cuisines.forEach(cuisine => {
@@ -163,22 +163,22 @@ const updateRestaurants = () => {
  */
 const resetRestaurants = (restaurants) => {
     // Remove all restaurants
-    self.restaurants = [];
+    restaurantCollection = [];
     const ul = document.getElementById('restaurants-list');
     ul.innerHTML = '';
 
     // Remove all map markers
-    if (self.markers) {
-        self.markers.forEach(marker => marker.remove());
+    if (markersCollection && markersCollection.length) {
+        markersCollection.forEach(marker => marker.remove());
     }
-    self.markers = [];
-    self.restaurants = restaurants;
+    markersCollection = [];
+    restaurantCollection = restaurants;
 };
 
 /**
  * Create all restaurants HTML and add them to the webpage.
  */
-const fillRestaurantsHTML = (restaurants = self.restaurants) => {
+const fillRestaurantsHTML = (restaurants = restaurantCollection) => {
     const ul = document.getElementById('restaurants-list');
     restaurants.forEach(restaurant => {
         ul.append(createRestaurantHTML(restaurant));
@@ -249,7 +249,7 @@ const createRestaurantHTML = (restaurant) => {
 /**
  * Add markers for current restaurants to the map.
  */
-const addMarkersToMap = (restaurants = self.restaurants) => {
+const addMarkersToMap = (restaurants = restaurantCollection) => {
     restaurants.forEach(restaurant => {
     // Add marker to the map
         const marker = DBHelper.mapMarkerForRestaurant(restaurant, newMap);
@@ -257,11 +257,11 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
         function onClick() {
             window.location.href = marker.options.url;
         }
-        self.markers.push(marker);
+        markersCollection.push(marker);
     });
 
 }; 
-/* addMarkersToMap = (restaurants = self.restaurants) => {
+/* addMarkersToMap = (restaurants = restaurantCollection) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
