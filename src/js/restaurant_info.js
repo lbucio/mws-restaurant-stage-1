@@ -46,24 +46,28 @@ const initMap = () => {
 /**
  * Get current restaurant from page URL.
  */
-const fetchRestaurantFromURL = (callback) => {
-    if (self.restaurant) { // restaurant already fetched!
-        callback(null, self.restaurant);
-        return;
+const fetchRestaurantFromURL = () => {
+    return new Promise((resolve, reject) => {
+        // restaurant already fetched!
+        if (currentRestaurant) {
+            resolve(currentRestaurant);
     }
+
     const id = getParameterByName('id');
-    if (!id) { // no id found in URL
-        error = 'No restaurant id in URL';
-        callback(error, null);
+        // no id found in URL
+        if (!id) {
+            reject('No restaurant id in URL');
     } else {
         DBHelper.fetchRestaurantById(id).then(restaurant => {
-            self.restaurant = restaurant;
+                currentRestaurant = restaurant;
             fillRestaurantHTML();
-            callback(null, restaurant);
+                resolve(restaurant);
         }).catch(error => {
             console.error(error);
+                reject(error);
         });
     }
+    });
 };
 
 /**
