@@ -21,10 +21,12 @@ window.addEventListener('load', () => {
 });
 
 const getRestuarants = () => {
-    DBHelper.getRestaurants().then(restaurants => {
+    DBHelper.getRestaurants()
+        .then(restaurants => {
         setNeighborhoodsFromRestaurants(restaurants);
         setCuisinesFromRestaurants(restaurants);
-    }).catch(error => {
+        })
+        .catch(error => {
         // Got an error!
         console.error(error);
     });
