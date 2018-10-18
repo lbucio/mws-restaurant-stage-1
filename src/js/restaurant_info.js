@@ -19,15 +19,14 @@ window.addEventListener('load', () => {
  * Initialize leaflet map
  */
 const initMap = () => {
-    fetchRestaurantFromURL((error, restaurant) => {
-        if (error) { // Got an error!
-            console.error(error);
-        } else {      
-            self.newMap = L.map('map', {
+    fetchRestaurantFromURL()
+        .then(restaurant => {
+            newMap = L.map('map', {
                 center: [restaurant.latlng.lat, restaurant.latlng.lng],
                 zoom: 16,
                 scrollWheelZoom: false
             });
+
             L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
                 mapboxToken: 'pk.eyJ1IjoibGFyczQiLCJhIjoiY2ppeGUybmZrMHAxeDNxbjNocDY4dndybiJ9.tGzAhqkV-7kQNBGsxb_ktQ',
                 maxZoom: 18,
@@ -37,8 +36,10 @@ const initMap = () => {
                 id: 'mapbox.streets'    
             }).addTo(newMap);
             fillBreadcrumb();
-            DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-        }
+            DBHelper.mapMarkerForRestaurant(restaurant, newMap);
+        })
+        .catch(error => {
+            console.error(error);
     });
 };  
  
