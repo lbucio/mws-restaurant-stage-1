@@ -23,18 +23,18 @@ window.addEventListener('load', () => {
 const getRestuarants = () => {
     DBHelper.getRestaurants()
         .then(restaurants => {
-        setNeighborhoodsFromRestaurants(restaurants);
-        setCuisinesFromRestaurants(restaurants);
+            setNeighborhoodsFromRestaurants(restaurants);
+            setCuisinesFromRestaurants(restaurants);
         })
         .catch(error => {
-        // Got an error!
-        console.error(error);
-    });
+            // Got an error!
+            console.error(error);
+        });
 };
 
 const setNeighborhoodsFromRestaurants = (data) => {
     // Get all neighborhoods from all restaurants
-    const neighborhoods = data.map((v, i) => data[i].neighborhood);
+    const neighborhoods = data.map((_, i) => data[i].neighborhood);
     // Remove duplicates from neighborhoods
     const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
     neighborhoodCollection = uniqueNeighborhoods;
@@ -251,7 +251,7 @@ const createRestaurantHTML = (restaurant) => {
  */
 const addMarkersToMap = (restaurants = restaurantCollection) => {
     restaurants.forEach(restaurant => {
-    // Add marker to the map
+        // Add marker to the map
         const marker = DBHelper.mapMarkerForRestaurant(restaurant, newMap);
         marker.on('click', onClick);
         function onClick() {
