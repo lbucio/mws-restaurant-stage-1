@@ -20,6 +20,14 @@ window.addEventListener('load', () => {
     registerServiceWorker();
 });
 
+window.addEventListener('online', () => {
+    isOnline();
+});
+
+window.addEventListener('offline', () => {
+    isOnline();
+});
+
 const getRestuarants = () => {
     DBHelper.getRestaurants()
         .then(restaurants => {
@@ -284,3 +292,14 @@ const registerServiceWorker = () => {
             console.log('ServiceWorker registration failed: ', err);
         });
 };
+
+const isOnline = () => {
+    console.log('Hello! Status Change');
+    var connectionStatus = document.querySelector('#connection-status');
+
+    if (navigator.onLine) {
+        connectionStatus.innerHTML = '';
+    } else {
+        connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+    }
+}
