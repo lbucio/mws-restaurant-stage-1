@@ -3,12 +3,18 @@ import * as L from 'leaflet';
 
 let currentRestaurant;
 let newMap;
+let reviewsForm;
 
 /**
  * Initialize map as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', () => {  
     initMap();
+    reviewsForm = document.querySelector('#reviews-form');
+    reviewsForm.addEventListener('submit', (event) => {
+        submitRestaurantReview(event);
+    });
+    console.log(reviewsForm);
 });
 
 window.addEventListener('load', () => {
@@ -230,4 +236,21 @@ const registerServiceWorker = () => {
         }, err => {
             console.log('ServiceWorker registration failed: ', err);
         });
+};
+
+const submitRestaurantReview = (event) => {
+    event.preventDefault();
+    
+    const test = reviewsForm.querySelector('input');
+    console.log('reviewsForm', reviewsForm);
+    console.log('test', test);
+    const name = reviewsForm.querySelector("input[name='name']").value;
+    const rating = reviewsForm.querySelector("input[name='rating']").value;
+    const comments = reviewsForm.querySelector("input[name='comments']").value;
+    console.log('name', name);
+
+    const formData = new FormData();
+    formData.set('name', name);
+    formData.set('rating', rating);
+    formData.set('comments', comments);
 };
