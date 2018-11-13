@@ -27,15 +27,20 @@ export class DBHelper {
     /**
    * Get the init for the fetch request
    */
-    static fetchInit(method) {
+    static fetchInit(method, formData = null) {
         const headers = new Headers();
 
         headers.append('Accept', 'application/json');
-
-        return {
+        const init = {
             headers,
             method
         };
+
+        if (formData) {
+            init.body = formData;
+        }
+
+        return init;
     }
 
     /**
@@ -99,14 +104,24 @@ export class DBHelper {
    * Fetch a restaurant by its ID.
    */
     static fetchRestaurantById(id) {
+        const data = {
+            restaurant: null,
+            reviews: null,
+        };
         return new Promise((resolve, reject) => {
             // fetch all restaurants with proper error handling.
             DBHelper.getRestaurantById(id).then(restaurant => {
                 if (restaurant) { // Got the restaurant
-                    resolve(restaurant);
+                    data.restaurant = restaurant;
+                    return DBHelper.getReviewsForRestaurant(id);
                 } else { // Restaurant does not exist in the database
                     reject('Restaurant does not exist');
                 }
+            }).then(reviews => {
+                if (reviews) {
+                    data.reviews = reviews;
+                }
+                resolve(data);
             }).catch(error => {
                 reject(error);
             });
