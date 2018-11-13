@@ -21,6 +21,9 @@ window.addEventListener('load', () => {
     registerServiceWorker();
 });
 
+window.addEventListener('online', isOnline);
+window.addEventListener('offline', isOnline);
+
 /**
  * Initialize leaflet map
  */
@@ -254,3 +257,13 @@ const submitRestaurantReview = (event) => {
     formData.set('rating', rating);
     formData.set('comments', comments);
 };
+
+const isOnline = () => {
+    var connectionStatus = document.querySelector('#connection-status');
+
+    if (navigator.onLine) {
+        connectionStatus.innerHTML = '';
+    } else {
+        connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+    }
+}
