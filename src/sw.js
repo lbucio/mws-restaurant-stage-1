@@ -83,11 +83,26 @@ self.addEventListener('fetch', function (event) {
 
 });
 
+self.addEventListener('sync', event => {
+    if (event.tag === 'sync-reviews') {
+        event.waitUntil(syncReviews());
+    }
+});
+
 const openDatabase = () => {
-    const dbPromise = idb.open('restaurant-reviews-store', 1, upgradeDb => {
-        const store = upgradeDb.createObjectStore('restaurant-reviews', { keyPath: 'id' });
-        store.createIndex('by-cuisine', 'cuisine_type')
-        store.createIndex('by-neighborhood', 'neighborhood')
+    const dbPromise = idb.open('restaurant-reviews-store', 3, upgradeDb => {
+        switch(upgradeDb.oldVersion) {
+            case 0:
+                const store = upgradeDb.createObjectStore('restaurant-reviews', { keyPath: 'id' });
+                store.createIndex('by-cuisine', 'cuisine_type');
+                store.createIndex('by-neighborhood', 'neighborhood');
+            case 1:
+                const reviewStore = upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
+                reviewStore.createIndex('restaurant_id', 'restaurant_id');
+            case 2:
+                const offlineReviewStore = upgradeDb.createObjectStore('offlineReviews', { keyPath: 'id', autoIncrement: true });
+                offlineReviewStore.createIndex('restaurant_id', 'restaurant_id');
+        }
     });
     return dbPromise;
 };
@@ -128,4 +143,11 @@ const getRestaurant = async (id) => {
     const restaurant = await store.get(id);
     const restaurantJson = JSON.stringify(restaurant);
     return new Response(restaurantJson);
+};
+
+const syncReviews = () => {
+    return new Promise((resolve, reject) => {
+        console.log('Hello from sync 2');
+        resolve('hello');
+    });
 };
