@@ -57,6 +57,25 @@ export class DBHelper {
     }
 
     /**
+   * Get restaurant by id
+   */
+    static getReviewsForRestaurant(id) {
+        const init = DBHelper.fetchInit('GET');
+        const url = `${DBHelper.API_URL}/reviews/?restaurant_id=${id}`;
+        return DBHelper.makeCall(url, init);
+    }
+
+    /**
+   * Get restaurant by id
+   */
+    static postReview(formData) {
+        const init = DBHelper.fetchInit('POST', formData);
+        const url = `${DBHelper.API_URL}/reviews`;
+
+        return DBHelper.makeCall(url, init);
+    }
+
+    /**
    * Fetch the resource
    */
     static makeCall(url, init) {
