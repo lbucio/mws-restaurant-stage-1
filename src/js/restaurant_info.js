@@ -1,7 +1,9 @@
+import idb from 'idb';
 import { DBHelper } from './dbhelper.js';
 import * as L from 'leaflet';
 
 let currentRestaurant;
+let currentReviews;
 let newMap;
 let reviewsForm;
 
@@ -10,14 +12,10 @@ let reviewsForm;
  */
 document.addEventListener('DOMContentLoaded', () => {  
     initMap();
-    reviewsForm = document.querySelector('#reviews-form');
-    reviewsForm.addEventListener('submit', (event) => {
-        submitRestaurantReview(event);
-    });
-    console.log(reviewsForm);
 });
 
 window.addEventListener('load', () => {
+    reviewsForm = document.querySelector('#reviews-form');
     registerServiceWorker();
 });
 
@@ -29,7 +27,7 @@ window.addEventListener('offline', isOnline);
  */
 const initMap = () => {
     fetchRestaurantFromURL()
-        .then(restaurant => {
+        .then(({restaurant, reviews }) => {
             newMap = L.map('map', {
                 center: [restaurant.latlng.lat, restaurant.latlng.lng],
                 zoom: 16,
@@ -45,6 +43,7 @@ const initMap = () => {
                 id: 'mapbox.streets'
             }).addTo(newMap);
             fillBreadcrumb();
+            fillForm();
             DBHelper.mapMarkerForRestaurant(restaurant, newMap);
         })
         .catch(error => {
@@ -67,10 +66,11 @@ const fetchRestaurantFromURL = () => {
         if (!id) {
             reject('No restaurant id in URL');
         } else {
-            DBHelper.fetchRestaurantById(id).then(restaurant => {
-                currentRestaurant = restaurant;
-                fillRestaurantHTML();
-                resolve(restaurant);
+            DBHelper.fetchRestaurantById(id).then(data => {
+                currentRestaurant = data.restaurant;
+                currentReviews = data.reviews;
+                fillRestaurantHTML(currentRestaurant);
+                resolve(data);
             }).catch(error => {
                 console.error(error);
                 reject(error);
@@ -155,7 +155,7 @@ const fillRestaurantHoursHTML = (operatingHours = currentRestaurant.operating_ho
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-const fillReviewsHTML = (reviews = currentRestaurant.reviews) => {
+const fillReviewsHTML = (reviews = currentReviews) => {
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h3');
     title.innerHTML = 'Reviews';
@@ -184,7 +184,8 @@ const createReviewHTML = (review) => {
     li.appendChild(name);
 
     const date = document.createElement('p');
-    date.innerHTML = review.date;
+    const reviewDate = new Date(review.createdAt);
+    date.innerHTML = `${reviewDate.getMonth()}/${reviewDate.getFullYear()}`;
     li.appendChild(date);
 
     const rating = document.createElement('p');
@@ -213,6 +214,14 @@ const fillBreadcrumb = (restaurant = currentRestaurant) => {
 };
 
 /**
+ * Set restaurant id to reviews form
+ */
+const fillForm = (restaurant = currentRestaurant) => {
+    const restaurantIdHiddenInput = document.querySelector("input[name='restaurant_id'");
+    restaurantIdHiddenInput.value = restaurant.id;
+};
+
+/**
  * Get a parameter by name from page URL.
  */
 const getParameterByName = (name, url) => {
@@ -236,26 +245,91 @@ const registerServiceWorker = () => {
     navigator.serviceWorker.register('../sw.js')
         .then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            reviewsForm.addEventListener('submit', (event) => {
+                syncRestaurantReview(event, registration);
+            });
+            // return registration.sync.register('sync-reviews');            
         }, err => {
             console.log('ServiceWorker registration failed: ', err);
         });
 };
 
-const submitRestaurantReview = (event) => {
-    event.preventDefault();
-    
-    const test = reviewsForm.querySelector('input');
-    console.log('reviewsForm', reviewsForm);
-    console.log('test', test);
-    const name = reviewsForm.querySelector("input[name='name']").value;
-    const rating = reviewsForm.querySelector("input[name='rating']").value;
-    const comments = reviewsForm.querySelector("input[name='comments']").value;
-    console.log('name', name);
+// const submitRestaurantReview = (event) => {
+//     event.preventDefault();
+//     const form = document.forms.namedItem('review-form');
+//     const formData = new FormData(form);
+//     DBHelper.postReview(formData).then(response => {
+//         clearForm(form);
+//         addReview(response);
+//     });
+// };
 
-    const formData = new FormData();
-    formData.set('name', name);
-    formData.set('rating', rating);
-    formData.set('comments', comments);
+const syncRestaurantReview = (event, registration) => {
+    event.preventDefault();
+    console.log('Here!!!');
+    const form = document.forms.namedItem('review-form');
+    const formData = new FormData(form);
+    clearForm(form);
+    addReview(formData, registration);
+};
+
+const clearForm = (form) => {
+    form.reset();
+};
+
+const addReview = (formData, registration) => {
+
+    // If can't do a background sync just make the call
+    if (!window.SyncManager || !navigator.serviceWorker) {
+        DBHelper.postReview(formData).then(response => {
+            addReviewHTML(response);
+        });
+    }
+
+    return openDatabase().then(db => {
+        const transaction = db.transaction('offlineReviews', 'readwrite');
+        const offlineReviewStore = transaction.objectStore('offlineReviews');
+        
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        offlineReviewStore.add({ restaurant_id: data.restaurant_id, data });
+        return transaction.complete;
+    }).then(() => {
+        // register background sync if transaction was successful
+        console.log('review saved to iDB successfully!');
+        return registration.sync.register('sync-reviews');
+    }).catch(err => {
+        return DBHelper.postReview(formData).then(response => {
+            addReviewHTML(response);
+        });
+    });
+};
+
+const addReviewHTML = (review) => {
+    const reviewHTML = createReviewHTML(review);
+    const ul = document.getElementById('reviews-list');
+    ul.appendChild(reviewHTML);
+};
+
+const openDatabase = () => {
+    const dbPromise = idb.open('restaurant-reviews-store', 3, upgradeDb => {
+        switch (upgradeDb.oldVersion) {
+            case 0:
+                const store = upgradeDb.createObjectStore('restaurant-reviews', { keyPath: 'id' });
+                store.createIndex('by-cuisine', 'cuisine_type');
+                store.createIndex('by-neighborhood', 'neighborhood');
+            case 1:
+                const reviewStore = upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
+                reviewStore.createIndex('restaurant_id', 'restaurant_id');
+            case 2:
+                const offlineReviewStore = upgradeDb.createObjectStore('offlineReviews', { keyPath: 'id', autoIncrement: true });
+                offlineReviewStore.createIndex('restaurant_id', 'restaurant_id');
+        }
+    });
+    return dbPromise;
 };
 
 const isOnline = () => {
