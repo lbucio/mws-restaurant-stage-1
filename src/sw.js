@@ -39,6 +39,18 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
     const request = event.request;
+    const requestURL = new URL(request.url);
+
+    // Don't cache map tiles
+    if (requestURL.origin.includes('api.tiles.mapbox')) {
+        return fetch(request);
+    }
+
+    // Fix issue for restaurant html thinking they are all different pages because of params
+    if (requestURL.pathname.startsWith('/restaurant.html')) {
+        return event.respondWith(caches.match('/restaurant.html'));
+    }
+
     const isJsonRequest = request.headers.has('Accept') ? request.headers.get('Accept') === 'application/json' : false;
 
     if (isJsonRequest && request.url.match(/(\/restaurants\/\d)/g) !== null) {
