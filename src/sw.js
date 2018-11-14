@@ -128,7 +128,7 @@ const openDatabase = () => {
                 const reviewStore = upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
                 reviewStore.createIndex('restaurant_id', 'restaurant_id');
             case 2:
-                const offlineReviewStore = upgradeDb.createObjectStore('offlineReviews', { keyPath: 'id', autoIncrement: true });
+                const offlineReviewStore = upgradeDb.createObjectStore('offline-reviews', { keyPath: 'id', autoIncrement: true });
                 offlineReviewStore.createIndex('restaurant_id', 'restaurant_id');
         }
     });
@@ -161,8 +161,8 @@ const getOfflineReviewsStore = async () => {
         return Promise.resolve(null);
     }
 
-    const transaction = db.transaction('offlineReviews', 'readwrite');
-    return transaction.objectStore('offlineReviews');
+    const transaction = db.transaction('offline-reviews', 'readwrite');
+    return transaction.objectStore('offline-reviews');
 };
 
 const saveRestaurant = async (response) => {

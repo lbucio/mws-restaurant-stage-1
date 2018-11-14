@@ -190,7 +190,7 @@ const createReviewHTML = (review) => {
     if (review.createdAt) {
         reviewDate = new Date(review.createdAt);
     }
-    
+
     date.innerHTML = `${reviewDate.getMonth()}/${reviewDate.getFullYear()}`;
     li.appendChild(date);
 
@@ -272,7 +272,6 @@ const registerServiceWorker = () => {
 
 const syncRestaurantReview = (event, registration) => {
     event.preventDefault();
-    console.log('Here!!!');
     const form = document.forms.namedItem('review-form');
     const formData = new FormData(form);
     clearForm(form);
@@ -293,8 +292,8 @@ const addReview = (formData, registration) => {
     }
 
     return openDatabase().then(db => {
-        const transaction = db.transaction('offlineReviews', 'readwrite');
-        const offlineReviewStore = transaction.objectStore('offlineReviews');
+        const transaction = db.transaction('offline-reviews', 'readwrite');
+        const offlineReviewStore = transaction.objectStore('offline-reviews');
         
         const data = {};
         formData.forEach((value, key) => {
@@ -306,7 +305,6 @@ const addReview = (formData, registration) => {
         return transaction.complete;
     }).then(() => {
         // register background sync if transaction was successful
-        console.log('review saved to iDB successfully!');
         return registration.sync.register('sync-reviews');
     }).catch(err => {
         return DBHelper.postReview(formData).then(response => {
@@ -332,7 +330,7 @@ const openDatabase = () => {
                 const reviewStore = upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
                 reviewStore.createIndex('restaurant_id', 'restaurant_id');
             case 2:
-                const offlineReviewStore = upgradeDb.createObjectStore('offlineReviews', { keyPath: 'id', autoIncrement: true });
+                const offlineReviewStore = upgradeDb.createObjectStore('offline-reviews', { keyPath: 'id', autoIncrement: true });
                 offlineReviewStore.createIndex('restaurant_id', 'restaurant_id');
         }
     });
