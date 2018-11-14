@@ -245,5 +245,9 @@ const fetchInit = (method, formData = null) => {
 
     return init;
 };
+
+const clearOfflineReviews = () => {
+    getOfflineReviewsStore().then(store => {
+        store.clear();
     });
 };
