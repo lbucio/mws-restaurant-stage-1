@@ -118,7 +118,7 @@ self.addEventListener('sync', event => {
 });
 
 const openDatabase = () => {
-    const dbPromise = idb.open('restaurant-reviews-store', 3, upgradeDb => {
+    const dbPromise = idb.open('restaurant-reviews-store', 4, upgradeDb => {
         switch(upgradeDb.oldVersion) {
             case 0:
                 const store = upgradeDb.createObjectStore('restaurant-reviews', { keyPath: 'id' });
@@ -130,6 +130,9 @@ const openDatabase = () => {
             case 2:
                 const offlineReviewStore = upgradeDb.createObjectStore('offline-reviews', { keyPath: 'id', autoIncrement: true });
                 offlineReviewStore.createIndex('restaurant_id', 'restaurant_id');
+            case 3:
+                const offlineFavoritesStore = upgradeDb.createObjectStore('offline-favorites', { keyPath: 'id', autoIncrement: true });
+                offlineFavoritesStore.createIndex('restaurant_id', 'restaurant_id');
         }
     });
     return dbPromise;
