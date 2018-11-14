@@ -6,6 +6,7 @@ let currentRestaurant;
 let currentReviews;
 let newMap;
 let reviewsForm;
+let connectionStatusTimeoutId;
 
 /**
  * Initialize map as soon as the page is loaded.
@@ -17,10 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
     reviewsForm = document.querySelector('#reviews-form');
     registerServiceWorker();
-});
 
+    isOnline();
 window.addEventListener('online', isOnline);
 window.addEventListener('offline', isOnline);
+});
 
 /**
  * Initialize leaflet map
@@ -336,8 +338,22 @@ const isOnline = () => {
     var connectionStatus = document.querySelector('#connection-status');
 
     if (navigator.onLine) {
+        if (!connectionStatus.classList.contains('offline')) {
+            return;
+        }
+        connectionStatus.innerHTML = 'You are back online';
+        connectionStatus.classList.remove('offline');
+        connectionStatus.classList.add('online');
+        connectionStatusTimeoutId = window.setTimeout(_ => {
         connectionStatus.innerHTML = '';
+        }, 1500);
     } else {
+        if (connectionStatusTimeoutId) {
+            window.clearTimeout(connectionStatusTimeoutId);
+            connectionStatusTimeoutId = null;
+        }
         connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+        connectionStatus.classList.remove('online');
+        connectionStatus.classList.add('offline');
     }
 }

@@ -7,6 +7,7 @@ let markersCollection = [];
 let neighborhoodCollection;
 let newMap;
 let restaurantCollection;
+let connectionStatusTimeoutId;
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -18,14 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('load', () => {
     registerServiceWorker();
-});
-
-window.addEventListener('online', () => {
     isOnline();
-});
-
-window.addEventListener('offline', () => {
-    isOnline();
+    window.addEventListener('online', isOnline);
+    window.addEventListener('offline', isOnline);
 });
 
 const getRestuarants = () => {
@@ -294,12 +290,25 @@ const registerServiceWorker = () => {
 };
 
 const isOnline = () => {
-    console.log('Hello! Status Change');
     var connectionStatus = document.querySelector('#connection-status');
 
     if (navigator.onLine) {
+        if (!connectionStatus.classList.contains('offline')) {
+            return;
+        }
+        connectionStatus.innerHTML = 'You are back online';
+        connectionStatus.classList.remove('offline');
+        connectionStatus.classList.add('online');
+        connectionStatusTimeoutId = window.setTimeout(_ => {
         connectionStatus.innerHTML = '';
+        }, 1500);
     } else {
+        if (connectionStatusTimeoutId) {
+            window.clearTimeout(connectionStatusTimeoutId);
+            connectionStatusTimeoutId = null;
+        }
         connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+        connectionStatus.classList.remove('online');
+        connectionStatus.classList.add('offline');
     }
 }
