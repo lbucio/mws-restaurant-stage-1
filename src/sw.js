@@ -179,6 +179,14 @@ const saveRestaurants = async (response) => {
     });
 };
 
+const saveReviews = async (response) => {
+    const reviews = await response.json();
+    const store = await getReviewsStore();
+    reviews.forEach(review => {
+        store.put(review);
+    });
+};
+
 const getRestaurants = async () => {
     const store = await getRestaurantStore();
     const restaurants = await store.getAll();
