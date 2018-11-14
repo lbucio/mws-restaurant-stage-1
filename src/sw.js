@@ -201,6 +201,14 @@ const getRestaurant = async (id) => {
     return new Response(restaurantJson);
 };
 
+const getReviews = async (id) => {
+    const store = await getReviewsStore();
+    const reviews = await store.getAll();
+    const filteredReviews = reviews.filter(review => review.restaurant_id == id);
+    const reviewsJson = JSON.stringify(filteredReviews);
+    return new Response(reviewsJson);
+};
+
 const syncReviews = () => {
     return new Promise((resolve, reject) => {
         console.log('Hello from sync 2');
