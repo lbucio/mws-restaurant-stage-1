@@ -74,6 +74,18 @@ self.addEventListener('fetch', function (event) {
                 return getRestaurants();
             })
         );
+    } else if (isJsonRequest && request.url.includes('/reviews/?restaurant_id=')) {
+        event.respondWith(
+            fetch(request).then(function (response) {
+                saveReviews(response.clone());
+                return response;
+            }).catch(_ => {
+                const string = '/reviews/?restaurant_id=';
+                const index = request.url.indexOf(string);
+                const id = Number(request.url.slice(index + string.length));
+                return getReviews(id);
+            })
+        );
     } 
 
     if (!isJsonRequest)
