@@ -145,6 +145,26 @@ const getRestaurantStore = async () => {
     return transaction.objectStore('restaurant-reviews');
 };
 
+const getReviewsStore = async () => {
+    const db = await dbPromise;
+    if (!db) {
+        return Promise.resolve(null);
+    }
+
+    const transaction = db.transaction('reviews', 'readwrite');
+    return transaction.objectStore('reviews');
+};
+
+const getOfflineReviewsStore = async () => {
+    const db = await dbPromise;
+    if (!db) {
+        return Promise.resolve(null);
+    }
+
+    const transaction = db.transaction('offlineReviews', 'readwrite');
+    return transaction.objectStore('offlineReviews');
+};
+
 const saveRestaurant = async (response) => {
     const restaurant = await response.json();
     const store = await getRestaurantStore();
