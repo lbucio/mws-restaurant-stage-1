@@ -210,8 +210,25 @@ const getReviews = async (id) => {
 };
 
 const syncReviews = () => {
-    return new Promise((resolve, reject) => {
-        console.log('Hello from sync 2');
-        resolve('hello');
+    return getOfflineReviewsStore().then(store => {
+        return store.getAll().then(reviews => {
+            return Promise.all(reviews.map(review => {
+                const port = 1337; // Change this to your server port
+                const url = `http://localhost:${port}/reviews`;
+                const formData = new FormData();
+                const data = review.data;
+                
+                formData.set('name', data.name);
+                formData.set('comments', data.comments);
+                formData.set('rating', Number(data.rating));
+                formData.set('restaurant_id', Number(data.restaurant_id));
+
+                const init = fetchInit('POST', formData);
+                return fetch(url, init);
+            }));
+        });
+    });
+};
+
     });
 };
