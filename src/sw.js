@@ -111,7 +111,13 @@ self.addEventListener('sync', event => {
     if (event.tag === 'sync-reviews') {
         event.waitUntil(
             syncReviews().then(response => {
-                clearOfflineReviews();
+                clearStore('offline-reviews');
+            })
+        );
+    } else if (event.tag === 'sync-favorites') {
+        event.waitUntil(
+            syncFavorites().then(response => {
+                clearStore('offline-favorites');
             })
         );
     }
