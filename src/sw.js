@@ -230,5 +230,20 @@ const syncReviews = () => {
     });
 };
 
+const fetchInit = (method, formData = null) => {
+    const headers = new Headers();
+
+    headers.append('Accept', 'application/json');
+    const init = {
+        headers,
+        method
+    };
+
+    if (formData) {
+        init.body = formData;
+    }
+
+    return init;
+};
     });
 };
