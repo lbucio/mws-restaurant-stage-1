@@ -109,7 +109,11 @@ self.addEventListener('fetch', function (event) {
 
 self.addEventListener('sync', event => {
     if (event.tag === 'sync-reviews') {
-        event.waitUntil(syncReviews());
+        event.waitUntil(
+            syncReviews().then(response => {
+                clearOfflineReviews();
+            })
+        );
     }
 });
 
