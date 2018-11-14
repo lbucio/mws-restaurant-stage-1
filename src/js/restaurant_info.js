@@ -186,7 +186,11 @@ const createReviewHTML = (review) => {
     li.appendChild(name);
 
     const date = document.createElement('p');
-    const reviewDate = new Date(review.createdAt);
+    let reviewDate = new Date();
+    if (review.createdAt) {
+        reviewDate = new Date(review.createdAt);
+    }
+    
     date.innerHTML = `${reviewDate.getMonth()}/${reviewDate.getFullYear()}`;
     li.appendChild(date);
 
