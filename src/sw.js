@@ -265,8 +265,13 @@ const fetchInit = (method, formData = null) => {
     return init;
 };
 
-const clearOfflineReviews = () => {
-    getOfflineReviewsStore().then(store => {
-        store.clear();
-    });
+const clearStore = async (store) => {
+    const db = await dbPromise;
+    if (!db) {
+        return Promise.resolve(null);
+    }
+
+    const transaction = db.transaction(store, 'readwrite');
+    const objectStore = await transaction.objectStore(store);
+    objectStore.clear();
 };
