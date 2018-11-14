@@ -7,6 +7,7 @@ let currentReviews;
 let newMap;
 let reviewsForm;
 let connectionStatusTimeoutId;
+let favoriteButton;
 
 /**
  * Initialize map as soon as the page is loaded.
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('load', () => {
+    favoriteButton = document.getElementById('restaurant-favorite-button');
     reviewsForm = document.querySelector('#reviews-form');
     registerServiceWorker();
 
@@ -98,6 +100,14 @@ const fillRestaurantHTML = (restaurant = currentRestaurant) => {
 
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
+
+    const favoriteButton = document.getElementById('restaurant-favorite-button');
+    favoriteButton.setAttribute('aria-label', `Mark ${restaurant.name} as favorite`);
+    const isFavorited = (restaurant.is_favorite === true || restaurant.is_favorite === 'true');
+    if (isFavorited) {
+        favoriteButton.classList.add('is-favorited');
+    }
+    favoriteButton.setAttribute('aria-pressed', isFavorited);
 
     // fill operating hours
     if (restaurant.operating_hours) {
