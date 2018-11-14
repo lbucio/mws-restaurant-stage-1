@@ -71,11 +71,21 @@ export class DBHelper {
     }
 
     /**
-   * Get restaurant by id
+   * Create review for restaurant
    */
     static postReview(formData) {
         const init = DBHelper.fetchInit('POST', formData);
         const url = `${DBHelper.API_URL}/reviews`;
+
+        return DBHelper.makeCall(url, init);
+    }
+
+    /**
+   * Update Restaurant favorite
+   */
+    static updateRestaurantFavoriteStatus(restaurantId, isFavorite) {
+        const init = DBHelper.fetchInit('PUT');
+        const url = `${DBHelper.API_URL}/restaurants/${restaurantId}/?is_favorite=${isFavorite}`;
 
         return DBHelper.makeCall(url, init);
     }
