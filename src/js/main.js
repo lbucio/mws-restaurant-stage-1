@@ -300,7 +300,7 @@ const isOnline = () => {
         connectionStatus.classList.remove('offline');
         connectionStatus.classList.add('online');
         connectionStatusTimeoutId = window.setTimeout(_ => {
-        connectionStatus.innerHTML = '';
+            connectionStatus.innerHTML = '';
         }, 1500);
     } else {
         if (connectionStatusTimeoutId) {
