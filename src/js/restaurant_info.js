@@ -264,7 +264,9 @@ const registerServiceWorker = () => {
             reviewsForm.addEventListener('submit', (event) => {
                 syncRestaurantReview(event, registration);
             });
-            // return registration.sync.register('sync-reviews');            
+            favoriteButton.addEventListener('click', event => {
+                toggleFavoriteButton(event, registration);
+            });
         }, err => {
             console.log('ServiceWorker registration failed: ', err);
         });
