@@ -174,6 +174,16 @@ const getOfflineReviewsStore = async () => {
     return transaction.objectStore('offline-reviews');
 };
 
+const getOfflineFavoritesStore = async () => {
+    const db = await dbPromise;
+    if (!db) {
+        return Promise.resolve(null);
+    }
+
+    const transaction = db.transaction('offline-favorites', 'readwrite');
+    return transaction.objectStore('offline-favorites');
+};
+
 const saveRestaurant = async (response) => {
     const restaurant = await response.json();
     const store = await getRestaurantStore();
