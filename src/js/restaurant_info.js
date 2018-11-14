@@ -20,8 +20,8 @@ window.addEventListener('load', () => {
     registerServiceWorker();
 
     isOnline();
-window.addEventListener('online', isOnline);
-window.addEventListener('offline', isOnline);
+    window.addEventListener('online', isOnline);
+    window.addEventListener('offline', isOnline);
 });
 
 /**
@@ -302,6 +302,7 @@ const addReview = (formData, registration) => {
         });
 
         offlineReviewStore.add({ restaurant_id: data.restaurant_id, data });
+        addReviewHTML(data);
         return transaction.complete;
     }).then(() => {
         // register background sync if transaction was successful
@@ -349,7 +350,7 @@ const isOnline = () => {
         connectionStatus.classList.remove('offline');
         connectionStatus.classList.add('online');
         connectionStatusTimeoutId = window.setTimeout(_ => {
-        connectionStatus.innerHTML = '';
+            connectionStatus.innerHTML = '';
         }, 1500);
     } else {
         if (connectionStatusTimeoutId) {
