@@ -100,7 +100,7 @@ const fillRestaurantHTML = (restaurant = currentRestaurant) => {
 
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
-
+    
     const favoriteButton = document.getElementById('restaurant-favorite-button');
     favoriteButton.setAttribute('aria-label', `Mark ${restaurant.name} as favorite`);
     const isFavorited = (restaurant.is_favorite === true || restaurant.is_favorite === 'true');
@@ -375,3 +375,42 @@ const isOnline = () => {
         connectionStatus.classList.add('offline');
     }
 }
+
+const toggleFavoriteButton = (event, registration) => {
+    const isFavorited = (currentRestaurant.is_favorite === true || currentRestaurant.is_favorite === 'true');
+    // If can't do a background sync just make the call
+    if (!window.SyncManager || !navigator.serviceWorker) {
+        DBHelper.updateRestaurantFavoriteStatus(currentRestaurant.id, !isFavorited)
+            .then(response => {
+                markAsFavorite(response.is_favorite);
+            });
+    }
+
+    return openDatabase().then(db => {
+        const transaction = db.transaction('offline-favorites', 'readwrite');
+        const offlineFavoritesStore = transaction.objectStore('offline-favorites');
+        offlineFavoritesStore.add({ restaurant_id: currentRestaurant.id, is_favorite: !isFavorited });
+        markAsFavorite(!isFavorited);
+        return transaction.complete;
+    }).then(() => {
+        // register background sync if transaction was successful
+        return registration.sync.register('sync-favorites');
+    }).catch(err => {
+        DBHelper.updateRestaurantFavoriteStatus(currentRestaurant.id, !isFavorited)
+            .then(response => {
+                markAsFavorite(response.is_favorite);
+            });
+    });
+    
+};
+
+const markAsFavorite = (status) => {
+    currentRestaurant.is_favorite = status;
+    const isFavorited = (status === true || status === 'true');
+    if (isFavorited) {
+        favoriteButton.classList.add('is-favorited');
+    } else if (favoriteButton.classList.contains('is-favorited')) {
+        favoriteButton.classList.remove('is-favorited');
+    }
+    favoriteButton.setAttribute('aria-pressed', isFavorited);
+};
