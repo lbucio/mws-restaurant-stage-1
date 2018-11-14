@@ -249,6 +249,19 @@ const syncReviews = () => {
     });
 };
 
+const syncFavorites = () => {
+    return getOfflineFavoritesStore().then(store => {
+        return store.getAll().then(favorites => {
+            return Promise.all(favorites.map(favorite => {
+                const port = 1337; // Change this to your server port
+                const url = `http://localhost:${port}/restaurants/${favorite.restaurant_id}/?is_favorite=${favorite.is_favorite}`;
+                const init = fetchInit('PUT');
+                return fetch(url, init);
+            }));
+        });
+    });
+};
+
 const fetchInit = (method, formData = null) => {
     const headers = new Headers();
 
