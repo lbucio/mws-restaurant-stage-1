@@ -388,6 +388,41 @@ nav h1 a {
   color: #666;
 }
 
+#reviews-form {
+  padding: 1rem;
+  max-width: 300px;
+  width: 100%;
+}
+
+#reviews-form input, #reviews-form select, #reviews-form textarea, #reviews-form label {
+  display: block;
+  width: 100%;
+}
+
+#reviews-form fieldset {
+  margin: 0 0 .75rem;
+  padding: 0;
+  border: none;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+#reviews-form .field {
+  margin-bottom: .75rem;
+}
+
+#reviews-form label {
+  margin-bottom: .15rem;
+  color: hsl(0, 0%, 25%);
+}
+
+#reviews-form input[type="text"], #reviews-form textarea {
+  font-size: .875rem;
+  line-height: 1.35;
+  border: 1px solid lightgray;
+  padding: .35rem;
+}
+
 #map .leaflet-control-attribution {
   background: rgba(255, 255, 255, .85);
 }
